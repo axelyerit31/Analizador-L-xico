@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 
+import 'analizador.dart';
+
 void main() {
   runApp(MyApp());
 }
+
+TextEditingController codigoController = TextEditingController();
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -27,8 +31,22 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
+  List<String> tokens;
+
+  String listarRespuesta(){
+    String respuesta;
+
+    for (var i = 0; i < tokens.length; i++) {
+      respuesta += "- ${tokens[i]} \n";
+    }
+
+    return respuesta;
+  }
+
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
       appBar: AppBar(
         title: Text("Analizador Léxico"),
@@ -59,6 +77,7 @@ class _HomePageState extends State<HomePage> {
                       horizontal: 20
                     ),
                     child: TextField(
+                      controller: codigoController,
                       minLines: 10,
                       maxLines: 20,
                     ),
@@ -95,7 +114,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     height: 200,
                     width: 100,
-                    child: Text("Token")
+                    child: Text("")
                   ),
 
                   //Separacion
@@ -133,7 +152,9 @@ class _HomePageState extends State<HomePage> {
                   padding: EdgeInsets.symmetric(
                       horizontal: 15, vertical: 8)
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  tokens = analizadorLexico(codigoController.text);
+                },
                 child: Text(
                   "Analizar",
                   style: TextStyle(color: Colors.white)
