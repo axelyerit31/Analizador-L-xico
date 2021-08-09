@@ -1,15 +1,17 @@
-var tokens = [];
+import 'datos.dart';
 
+List<String> letras = ["a", "b"];
 
+String analizadorLexico(String codigo) {
 
-List<String> analizadorLexico(String codigo) {
-
-  List<String> respuesta;
+  String respuesta = "";
 
   //Separando las lineas de codigo
   List<String> lineasCodigo = codigo.split("\n");
 
-  respuesta = lineasCodigo;
+  for (var linea in lineasCodigo) {
+    respuesta += "- $linea\n";
+  }
 
   return respuesta;
 }

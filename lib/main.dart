@@ -1,3 +1,4 @@
+import 'package:analizador_lexico/datos.dart';
 import 'package:flutter/material.dart';
 
 import 'analizador.dart';
@@ -32,17 +33,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
-  List<String> tokens;
-
-  String listarRespuesta(){
-    String respuesta;
-
-    for (var i = 0; i < tokens.length; i++) {
-      respuesta += "- ${tokens[i]} \n";
-    }
-
-    return respuesta;
-  }
+  String tokens = "";
 
   @override
   Widget build(BuildContext context) {
@@ -77,6 +68,7 @@ class _HomePageState extends State<HomePage> {
                       horizontal: 20
                     ),
                     child: TextField(
+                      onChanged: (texto) {},
                       controller: codigoController,
                       minLines: 10,
                       maxLines: 20,
@@ -137,7 +129,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     height: 200,
                     width: 200,
-                    child: Text("Descripcion")
+                    child: Text(tokens)
                   )
                 ],
               ),
@@ -153,7 +145,9 @@ class _HomePageState extends State<HomePage> {
                       horizontal: 15, vertical: 8)
                 ),
                 onPressed: () {
-                  tokens = analizadorLexico(codigoController.text);
+                  setState(() {
+                    tokens = analizadorLexico(codigoController.text);
+                  });
                 },
                 child: Text(
                   "Analizar",
