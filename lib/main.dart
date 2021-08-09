@@ -32,8 +32,32 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  
+  //Convertimos la lista de tokens en una string
+  String formatearTokens(){
+    String respuesta = "";
 
-  String tokens = "";
+    for (var token in tokens) {
+      respuesta += "- $token\n";
+    }
+
+    return respuesta;
+  }
+
+  //Convertimos el nombre y categoria de cada token en una string
+  String formatearNombres(){
+    String respuesta = "";
+
+    for (var token in tokens) {
+      for (var i = 0; i < componentesLexicos.length; i++) {
+        if(dentroDe(token, componentesLexicos[i].keys)){
+          respuesta += "- ${componentesLexicos[i][token]} \n";
+        }
+      }
+    }
+
+    return respuesta;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -106,7 +130,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     height: 200,
                     width: 100,
-                    child: Text("")
+                    child: Text(formatearTokens())
                   ),
 
                   //Separacion
@@ -129,7 +153,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     height: 200,
                     width: 200,
-                    child: Text(tokens)
+                    child: Text(formatearNombres())
                   )
                 ],
               ),
@@ -146,7 +170,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 onPressed: () {
                   setState(() {
-                    tokens = analizadorLexico(codigoController.text);
+                    analizadorLexico(codigoController.text);
                   });
                 },
                 child: Text(

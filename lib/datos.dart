@@ -39,6 +39,9 @@ Map<String, String> palabrasReservadas = {
   "cap": "Capitalizar"
 };
 
+List<Map> componentesLexicos = [palabrasReservadas, opAsignacion, opAritmeticos, opCompuestosAsignacion, opComparacion, opBooleanos, simbolosEspeciales];
+List<Map> operadores = [opAsignacion, opAritmeticos, opCompuestosAsignacion, opComparacion, opBooleanos, simbolosEspeciales];
+
 Map<String, String> opAsignacion = {
   "=": "Asignación"
 };
