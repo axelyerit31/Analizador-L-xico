@@ -37,8 +37,8 @@ class _HomePageState extends State<HomePage> {
   String formatearTokens(){
     String respuesta = "";
 
-    for (var token in tokens) {
-      respuesta += "- $token\n";
+    for (var i = 0; i < tokens.length; i++) {
+      respuesta += "- ${tokens[i]["token"]}\n";
     }
 
     return respuesta;
@@ -49,11 +49,7 @@ class _HomePageState extends State<HomePage> {
     String respuesta = "";
 
     for (var token in tokens) {
-      for (var i = 0; i < componentesLexicos.length; i++) {
-        if(dentroDe(token, componentesLexicos[i].keys)){
-          respuesta += "- ${componentesLexicos[i][token]} \n";
-        }
-      }
+      respuesta += "- ${token["nombre"]}\n";
     }
 
     return respuesta;
@@ -130,7 +126,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     height: 200,
                     width: 100,
-                    child: Text(formatearTokens())
+                    child: SingleChildScrollView(child: Text(formatearTokens()))
                   ),
 
                   //Separacion
@@ -153,7 +149,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     height: 200,
                     width: 200,
-                    child: Text(formatearNombres())
+                    child: SingleChildScrollView(child: Text(formatearNombres()))
                   )
                 ],
               ),
@@ -162,21 +158,47 @@ class _HomePageState extends State<HomePage> {
                 height: 20
               ),
               
-              TextButton(
-                style: TextButton.styleFrom(
-                  backgroundColor: Colors.red[400],
-                  padding: EdgeInsets.symmetric(
-                      horizontal: 15, vertical: 8)
-                ),
-                onPressed: () {
-                  setState(() {
-                    analizadorLexico(codigoController.text);
-                  });
-                },
-                child: Text(
-                  "Analizar",
-                  style: TextStyle(color: Colors.white)
-                )
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.red[400],
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 15, vertical: 8)
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        analizadorLexico(codigoController.text);
+                      });
+                    },
+                    child: Text(
+                      "Analizar",
+                      style: TextStyle(color: Colors.white)
+                    )
+                  ),
+
+                  SizedBox(
+                    width: 20
+                  ),
+
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.red[400],
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 15, vertical: 8)
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        tokens.clear();
+                      });
+                    },
+                    child: Text(
+                      "Limpiar",
+                      style: TextStyle(color: Colors.white)
+                    )
+                  ),
+                ],
               )
             ]
           ),

@@ -1,3 +1,16 @@
+List<Map> componentesLexicos = [palabrasReservadas, opAsignacion, opAritmeticos, opCompuestosAsignacion, opComparacion, opBooleanos, simbolosEspeciales];
+List<String> nombres = [
+  "Palabras Reservadas",
+  "Operadores de Asignación",
+  "Operadores Aritméticos",
+  "Operadores Compuestos Asignación",
+  "Opradores de Comrparación",
+  "Operadores Booleanos",
+  "Símbolos Especiales"
+];
+
+List<Map> operadores = [opAsignacion, opAritmeticos, opCompuestosAsignacion, opComparacion, opBooleanos, simbolosEspeciales];
+
 Map<String, String> palabrasReservadas = {
   "int" : "Entero",
   "dec" : "Decimal",
@@ -38,9 +51,6 @@ Map<String, String> palabrasReservadas = {
   "upper": "Convertir a mayúscula",
   "cap": "Capitalizar"
 };
-
-List<Map> componentesLexicos = [palabrasReservadas, opAsignacion, opAritmeticos, opCompuestosAsignacion, opComparacion, opBooleanos, simbolosEspeciales];
-List<Map> operadores = [opAsignacion, opAritmeticos, opCompuestosAsignacion, opComparacion, opBooleanos, simbolosEspeciales];
 
 Map<String, String> opAsignacion = {
   "=": "Asignación"
