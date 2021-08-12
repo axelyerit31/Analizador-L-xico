@@ -30,7 +30,7 @@ Future<List<Screen>> getScreenList() async {
 ///
 /// If the window is not being displayed, returns null. If the window is being
 /// displayed on multiple screens, the platform can return any of those screens.
-Future<Screen?> getCurrentScreen() async {
+Future<Screen> getCurrentScreen() async {
   final windowInfo = await WindowSizeChannel.instance.getWindowInfo();
   return windowInfo.screen;
 }
@@ -66,7 +66,7 @@ void setWindowTitle(String title) async {
 }
 
 /// Shows or hides the window.
-void setWindowVisibility({required bool visible}) async {
+void setWindowVisibility({bool visible}) async {
   WindowSizeChannel.instance.setWindowVisibility(visible: visible);
 }
 

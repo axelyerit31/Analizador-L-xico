@@ -28,5 +28,5 @@ class PlatformWindow {
   final double scaleFactor;
 
   /// The (or a) screen containing this window, if any.
-  final Screen? screen;
+  final Screen screen;
 }

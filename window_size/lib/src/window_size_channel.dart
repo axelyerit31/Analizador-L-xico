@@ -169,7 +169,7 @@ class WindowSizeChannel {
   }
 
   /// Sets the visibility of the window.
-  void setWindowVisibility({required bool visible}) async {
+  void setWindowVisibility({bool visible}) async {
     await _platformChannel.invokeMethod(_setWindowVisibilityMethod, visible);
   }
 

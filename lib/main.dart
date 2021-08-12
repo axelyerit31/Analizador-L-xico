@@ -12,8 +12,8 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
     setWindowTitle('Analizador Léxico');
-    setWindowMinSize(const Size(608, 1024));
-    setWindowMaxSize(Size(608, 1024));
+    setWindowMinSize(const Size(1200, 850));
+    setWindowMaxSize(Size.infinite);
   }
   debugDefaultTargetPlatformOverride = TargetPlatform.windows;
   runApp(MyApp());
@@ -23,12 +23,12 @@ TextEditingController codigoController = TextEditingController();
 Radius radioGrande = Radius.circular(15);
 Radius radioChico = Radius.circular(8);
 Radius radioBoton = Radius.circular(6);
-num alturaTitulos = 120;
-num tamanoCodigo = 14;
+double alturaTitulos = 120;
+double tamanoCodigo = 14;
 int tamanoToken = 4;
 int tamanoDescripcion = 6;
-num tamanoContador = 15;
-num tamanoCajaMostrarToken = 25;
+double tamanoContador = 15;
+double tamanoCajaMostrarToken = 25;
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -88,11 +88,9 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       body: Center(
         child: Container(
-          width: 1024,
-          height: 688,
           decoration: BoxDecoration(
             image: DecorationImage(
-              image: AssetImage("fondo.png"),
+              image: AssetImage("assets/fondo.png"),
               fit: BoxFit.cover
             )
           ),
@@ -124,7 +122,7 @@ class _HomePageState extends State<HomePage> {
             bottomLeft: radioGrande
           ),
           image: DecorationImage(
-            image: AssetImage("fondoAnalizador.png"),
+            image: AssetImage("assets/fondoAnalizador.png"),
             fit: BoxFit.cover
           )
         ),

@@ -12,6 +12,8 @@ List<String> comillas = [];
 
 bool dentroDe(caracter, lista){
 
+  print("Entramos a funcion dentroDe");
+
   bool respuesta = false;
 
   for (var i = 0; i < lista.length; i++) {
@@ -36,17 +38,19 @@ bool dentroDe(caracter, lista){
 }
 
 bool perteneceLenguaje(String componente){
+  print("Entramos a comprobar si pertenece lenguaje");
 
   bool respuesta = false;
 
   for (var lista in componentesLexicos) {
     for (var palabra in lista.keys) {
+      print("Comprobamos con el lexema $palabra");
       if(dentroDe(palabra, componente) || palabra == componente){
         return true;
       }
     }
   }
-
+  print(respuesta);
   return respuesta;
 }
 
@@ -97,13 +101,11 @@ void analizadorLexico(String codigo) {
     for (var i = 0; i < linea.length; i++) {
 
       print("\nITERACION NUMERO: $i");
-      
-      /* if(linea[i] != " "){
-        componente += linea[i];
-        print("Agregado: $componente");
-      } */
+      print(linea[i]);
+      componente += linea[i];
 
       try{
+        print("Entramos al try");
         //Condicion cuando es un token del lenguaje
         if(perteneceLenguaje(componente)){
 
@@ -197,7 +199,7 @@ void analizadorLexico(String codigo) {
           }
         }
       }on RangeError {
-        print(RangeError);
+        print("Error de rango en el analizador");
         break;
       }
     }
