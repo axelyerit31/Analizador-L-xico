@@ -1,10 +1,11 @@
 List<Map> componentesLexicos = [palabrasReservadas, opAsignacion, opAritmeticos, opCompuestosAsignacion, opComparacion, opBooleanos, simbolosEspeciales];
+
 List<String> nombres = [
   "Palabras Reservadas",
   "Operadores de Asignación",
   "Operadores Aritméticos",
   "Operadores Compuestos Asignación",
-  "Opradores de Comrparación",
+  "Operadores de Comparación",
   "Operadores Booleanos",
   "Símbolos Especiales"
 ];

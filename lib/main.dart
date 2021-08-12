@@ -1,13 +1,34 @@
+import 'dart:io';
+
 import 'package:analizador_lexico/datos.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:window_size/window_size.dart';
 
 import 'analizador.dart';
+import 'estilo.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+    setWindowTitle('Analizador Léxico');
+    setWindowMinSize(const Size(608, 1024));
+    setWindowMaxSize(Size(608, 1024));
+  }
+  debugDefaultTargetPlatformOverride = TargetPlatform.windows;
   runApp(MyApp());
 }
 
 TextEditingController codigoController = TextEditingController();
+Radius radioGrande = Radius.circular(15);
+Radius radioChico = Radius.circular(8);
+Radius radioBoton = Radius.circular(6);
+num alturaTitulos = 120;
+num tamanoCodigo = 14;
+int tamanoToken = 4;
+int tamanoDescripcion = 6;
+num tamanoContador = 15;
+num tamanoCajaMostrarToken = 25;
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -34,22 +55,23 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   
   //Convertimos la lista de tokens en una string
-  String formatearTokens(){
-    String respuesta = "";
+  List<String> formatearTokens(){
+    List<String> respuesta = [];
 
     for (var i = 0; i < tokens.length; i++) {
-      respuesta += "- ${tokens[i]["token"]}\n";
+      respuesta.add("${i+1}. ${tokens[i]["token"]}\n");
     }
 
     return respuesta;
   }
 
   //Convertimos el nombre y categoria de cada token en una string
-  String formatearNombres(){
-    String respuesta = "";
+  List<String> formatearDescripcion(){
+    List<String> respuesta = [];
 
-    for (var token in tokens) {
-      respuesta += "- ${token["nombre"]}\n";
+    for (var i = 0; i < tokens.length; i++) {
+      respuesta.add("${i+1}. ${tokens[i]["nombre"]}\n");
+      // ${tokens[i]["categoria"]}:
     }
 
     return respuesta;
@@ -57,152 +79,392 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    
+
+    double sh = MediaQuery.of(context).size.height;
+    double sw = MediaQuery.of(context).size.width;
+
+    print("Height: $sh, Width: $sw");
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Analizador Léxico"),
-        centerTitle: true,
-      ),
       body: Center(
         child: Container(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Row(
-                mainAxisSize: MainAxisSize.min,
+          width: 1024,
+          height: 688,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("fondo.png"),
+              fit: BoxFit.cover
+            )
+          ),
+          child: Container(
+            margin: EdgeInsets.symmetric(
+              vertical: 60,
+              horizontal: 80
+            ),
+            child: Row(
+              children: [
+                izquierda(),
+                derecha()
+              ]
+            )
+          )
+        ),
+      )
+    );
+  }
+
+  Widget izquierda() {
+    return Expanded(
+      flex: 15,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Color(0xff4F37E9),
+          borderRadius: BorderRadius.only(
+            topLeft: radioGrande,
+            bottomLeft: radioGrande
+          ),
+          image: DecorationImage(
+            image: AssetImage("fondoAnalizador.png"),
+            fit: BoxFit.cover
+          )
+        ),
+        padding: EdgeInsets.symmetric(
+          vertical: 50,
+          horizontal: 30
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              height: alturaTitulos,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisSize: MainAxisSize.max,
                 children: [
-
-                  //TextField
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.grey[500],
-                        width: 2
-                      ),
-                      borderRadius: BorderRadius.all(Radius.circular(10))
-                    ),
-                    height: 200,
-                    width: 200,
-                    padding: EdgeInsets.symmetric(
-                      vertical: 10,
-                      horizontal: 20
-                    ),
-                    child: TextField(
-                      onChanged: (texto) {},
-                      controller: codigoController,
-                      minLines: 10,
-                      maxLines: 20,
-                    ),
+                  Text(
+                    "Analizador Léxico",
+                    style: TextStyle(
+                      fontFamily: "Montserrat",
+                      fontSize: 30,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700
+                    )
                   ),
-
-                  //Separacion
-                  SizedBox(
-                    width: 10
+                  SizedBox(height: 40),
+                  Text(
+                    "Escribe el código:",
+                    style: TextStyle(
+                      fontFamily: "Montserrat",
+                      fontSize: 18,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500
+                    )
                   ),
-
-                  //Flecha
-                  Icon(
-                    Icons.arrow_forward,
-                    size: 30
-                  ),
-
-                  //Separacion
-                  SizedBox(
-                    width: 10
-                  ),
-
-                  //Area de Token
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.grey[500],
-                        width: 2
-                      ),
-                      borderRadius: BorderRadius.all(Radius.circular(10))
-                    ),
-                    padding: EdgeInsets.symmetric(
-                      vertical: 10,
-                      horizontal: 20
-                    ),
-                    height: 200,
-                    width: 100,
-                    child: SingleChildScrollView(child: Text(formatearTokens()))
-                  ),
-
-                  //Separacion
-                  SizedBox(
-                    width: 10
-                  ),
-
-                  //Area de Descripcion
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.grey[500],
-                        width: 2
-                      ),
-                      borderRadius: BorderRadius.all(Radius.circular(10))
-                    ),
-                    padding: EdgeInsets.symmetric(
-                      vertical: 10,
-                      horizontal: 20
-                    ),
-                    height: 200,
-                    width: 200,
-                    child: SingleChildScrollView(child: Text(formatearNombres()))
-                  )
+                  SizedBox(height: 10),
                 ],
               ),
-
-              SizedBox(
-                height: 20
-              ),
-              
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextButton(
-                    style: TextButton.styleFrom(
-                      backgroundColor: Colors.red[400],
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 15, vertical: 8)
+            ),
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(radioChico)
+                ),
+                padding: EdgeInsets.symmetric(
+                  vertical: 10,
+                  horizontal: 10
+                ),
+                child: TextField(
+                  controller: codigoController,
+                  minLines: 1,
+                  maxLines: 100,
+                  style: TextStyle(
+                    fontFamily: "SpaceMono",
+                    fontSize: tamanoCodigo,
+                  ),
+                  decoration: InputDecoration(
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide.none,
                     ),
-                    onPressed: () {
-                      setState(() {
-                        analizadorLexico(codigoController.text);
-                      });
-                    },
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                    ),
+                  )
+                )
+              )
+            ),
+            SizedBox(height: 10),
+            Row(
+              children: [
+                Expanded(
+                  child: Container()
+                ),
+                FlatButton(
+                  onPressed: () {
+                    setState(() {
+                      analizadorLexico(codigoController.text);             
+                    });
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      vertical: 10,
+                      horizontal: 20
+                    ),
                     child: Text(
                       "Analizar",
-                      style: TextStyle(color: Colors.white)
-                    )
-                  ),
-
-                  SizedBox(
-                    width: 20
-                  ),
-
-                  TextButton(
-                    style: TextButton.styleFrom(
-                      backgroundColor: Colors.red[400],
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 15, vertical: 8)
+                      style: TextStyle(
+                        fontFamily: "Montserrat",
+                        fontSize: 14,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500,
+                      )
                     ),
-                    onPressed: () {
-                      setState(() {
-                        tokens.clear();
-                      });
-                    },
-                    child: Text(
-                      "Limpiar",
-                      style: TextStyle(color: Colors.white)
-                    )
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(radioBoton)
+                  ),
+                  color: colorAzulOscuro
+                )
+              ],
+            )
+          ]
+        )
+      )
+    );
+  }
+
+  Widget derecha() {
+    return Expanded(
+      flex: 14,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topRight: radioGrande,
+            bottomRight: radioGrande
+          )
+        ),
+        padding: EdgeInsets.symmetric(
+          vertical: 50,
+          horizontal: 30
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              height: alturaTitulos,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: tamanoToken,
+                        child: Text(
+                          "Token",
+                          style: TextStyle(
+                            fontFamily: "Montserrat",
+                            fontSize: 18,
+                            color: colorAzulOscuro,
+                            fontWeight: FontWeight.w700
+                          )
+                        ),
+                      ),
+                      SizedBox(width: 10),
+                      Expanded(
+                        flex: tamanoDescripcion,
+                        child: Text(
+                          "Descripción",
+                          style: TextStyle(
+                            fontFamily: "Montserrat",
+                            fontSize: 18,
+                            color: colorAzulOscuro,
+                            fontWeight: FontWeight.w700
+                          )
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                ],
+              ),
+            ),
+            Expanded(
+              child: Stack(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: tamanoToken,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.all(radioChico),
+                            border: Border.all(
+                              width: 2,
+                              color: Color(0xffe4e4e4),
+                            )
+                          ),
+                          padding: EdgeInsets.symmetric(
+                            vertical: 10,
+                            horizontal: 10
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 10),
+                      Expanded(
+                        flex: tamanoDescripcion,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.all(radioChico),
+                            border: Border.all(
+                              width: 2,
+                              color: Color(0xffe4e4e4),
+                            )
+                          ),
+                          padding: EdgeInsets.symmetric(
+                            vertical: 10,
+                            horizontal: 10
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding:EdgeInsets.only(bottom: 2),
+                    child: SingleChildScrollView(
+                      physics: BouncingScrollPhysics(),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            flex: tamanoToken,
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                vertical: 18,
+                                horizontal: 15
+                              ),
+                              alignment: Alignment.topLeft,
+                              child: Column(
+                                children: [
+                                  for (var token in formatearTokens())
+                                    Container(
+                                      alignment: Alignment.topLeft,
+                                      height: tamanoCajaMostrarToken,
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            token,
+                                            style: TextStyle(
+                                              fontFamily: "SpaceMono",
+                                              fontSize: tamanoCodigo,
+                                              fontWeight: FontWeight.w700
+                                            ),
+                                          ),
+                                          /* Container(
+                                            height: tamanoContador,
+                                            width: tamanoContador,
+                                            alignment: Alignment.center,
+                                            decoration: BoxDecoration(
+                                              color: Color(0xff4F37E9),
+                                              shape: BoxShape.circle
+                                            ),
+                                            child: Text(
+                                              "2",
+                                              style: TextStyle(
+                                                fontFamily: "SpaceMono",
+                                                fontSize: 11,
+                                                color: Colors.white
+                                              ),
+                                            )
+                                          ) */
+                                        ],
+                                      ),
+                                    ),
+                                ],
+                              )
+                            ),
+                          ),
+                          SizedBox(width: 10),
+                          Expanded(
+                            flex: tamanoDescripcion,
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                vertical: 20,
+                                horizontal: 15
+                              ),
+                              alignment: Alignment.topLeft,
+                              child: Column(
+                                children: [
+                                  for (var descripcion in formatearDescripcion())
+                                    Container(
+                                      alignment: Alignment.topLeft,
+                                      height: tamanoCajaMostrarToken,
+                                      child: Text(
+                                        descripcion,
+                                        style: TextStyle(
+                                          fontFamily: "SpaceMono",
+                                          fontSize: tamanoCodigo,
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              )
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ],
               )
-            ]
-          ),
-        ),
+            ),
+            SizedBox(height: 10),
+            Row(
+              children: [
+                Expanded(
+                  child: Container()
+                ),
+                FlatButton(
+                  onPressed: () {
+                    setState(() {
+                      tokens.clear();
+                      tokensReg.clear();
+                    });
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      vertical: 10,
+                      horizontal: 20
+                    ),
+                    child: Text(
+                      "Limpiar",
+                      style: TextStyle(
+                        fontFamily: "Montserrat",
+                        fontSize: 14,
+                        color: colorAzulOscuro,
+                        fontWeight: FontWeight.w600,
+                      )
+                    ),
+                  ),
+                  shape: RoundedRectangleBorder(
+                    side: BorderSide(
+                      width: 1,
+                      color: colorAzulOscuro,
+                    ),
+                    borderRadius: BorderRadius.all(radioBoton)
+                  ),
+                  color: Colors.white
+                )
+              ],
+            )
+          ]
+        )
       )
     );
   }

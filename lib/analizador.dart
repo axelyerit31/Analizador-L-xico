@@ -7,31 +7,29 @@ List<String> subguion = ["_"];
 
 
 List<Map> tokens = [];
+List<String> tokensReg = [];
+List<String> comillas = [];
 
 bool dentroDe(caracter, lista){
 
   bool respuesta = false;
 
   for (var i = 0; i < lista.length; i++) {
-    if(caracter == lista[i]){
-      respuesta = true;
-    }
-  }
 
-  return respuesta;
-}
-
-bool contiene(String contenedor, String contenido){
-
-  bool respuesta = false;
-
-  for (var i = 0; i < contenedor.length; i++) {
-    if(contenedor.substring(i, contenedor.length) == contenido){
-      if(contenedor == contenido){
+    if(lista is List){
+      if(caracter == lista[i]){
         respuesta = true;
-        print("${contenedor.substring(i, contenedor.length)} contiene a $contenido????");
+      }
+    }else if(lista is String){
+      if(lista.substring(i, lista.length) == caracter){
+        if(lista == caracter){
+          respuesta = true;
+          print("${lista.substring(i, lista.length)} contiene a $caracter????");
+        }
       }
     }
+
+    
   }
 
   return respuesta;
@@ -43,7 +41,7 @@ bool perteneceLenguaje(String componente){
 
   for (var lista in componentesLexicos) {
     for (var palabra in lista.keys) {
-      if(contiene(componente,palabra) || palabra == componente){
+      if(dentroDe(palabra, componente) || palabra == componente){
         return true;
       }
     }
@@ -53,44 +51,42 @@ bool perteneceLenguaje(String componente){
 }
 
 void anadirToken({String token, String nombre, String categoria}){
-  bool existe = false;
 
-  for (var t in tokens) {
-    if(token == t["token"]){
-      existe = true;
-      print("Repetido $token");
-    }
-  }
+  //Comprobamos que token no este en el registro de tokens
+  if(!dentroDe(token, tokensReg)){
 
-  if(!existe){
-    tokens.add(
-      {
-        "token": token,
-        "nombre": nombre,
-        "categoria": categoria
+    //Comprobamos si hay nombre y categoria, si no la hay los busca
+    if(nombre == null && categoria == null){
+      for (var i = 0; i < componentesLexicos.length; i++) {
+        for (var componente in componentesLexicos[i].keys) {
+          if(componente == token){
+            anadirToken(
+              token: token,
+              nombre: componentesLexicos[i][componente],
+              categoria: nombres[i]
+            );
+          }
+        }
       }
-    );
-  }
-}
-
-void clasificarToken(String token){
-  for (var i = 0; i < componentesLexicos.length; i++) {
-    for (var componente in componentesLexicos[i].keys) {
-      if(componente == token){
-        anadirToken(
-          token: token,
-          nombre: componentesLexicos[i][componente],
-          categoria: nombres[i]
-        );
-      }
+    }else{
+      tokensReg.add(token);
+      tokens.add(
+        {
+          "token": token,
+          "nombre": nombre,
+          "categoria": categoria
+        }
+      );
+      print("Pertenece al lenguaje: $token");
     }
+
   }
 }
 
 //Analizador Lexico
 void analizadorLexico(String codigo) {
 
-  //Separando las lineas de codigo
+  //Borrando los espacio y separando las lineas de codigo
   codigo = codigo.replaceAll(" ", "");
   List<String> lineasCodigo = codigo.split("\n");
 
@@ -99,51 +95,96 @@ void analizadorLexico(String codigo) {
 
   for (var linea in lineasCodigo) {
     for (var i = 0; i < linea.length; i++) {
+
+      print("\nITERACION NUMERO: $i");
       
-      componente += linea[i];
-      print("Agregado: $componente");
+      /* if(linea[i] != " "){
+        componente += linea[i];
+        print("Agregado: $componente");
+      } */
 
       try{
         //Condicion cuando es un token del lenguaje
         if(perteneceLenguaje(componente)){
 
-          //Añadimos componente a la lista de tokens, y lo limpiamos
-          clasificarToken(componente);
-          print("Pertenece al lenguaje: $componente");
-          componente = "";
+          print("Comprobamos si pertenece al lenguaje");
+          //Condicion para encontrar cadena
+          if(dentroDe(componente, ['"', "'"])){
+            comillas.add(componente);
+            anadirToken(token: componente);
+
+            String token, nombre, categoria = "";
+            
+            if(comillas.length.isOdd){
+              for (var j = 0; j < linea.length - i; j++) {
+
+                print("Iteracion j: $j, i: $i");
+
+                if(i+j != linea.length-1){
+                  print("Dentro del limite del indice");
+                  if(dentroDe(linea[j+i+1], ['"', "'"])){
+                    i+=1;
+                    if(linea[i-1] == linea[j+i]){
+                      token = linea.substring(i, i+j);
+                      nombre = "Cadena";
+                      categoria = "Constante Cadena";
+                    }else{
+                      token = linea.substring(i, i+j);
+                      nombre = "Error (Comillas)";
+                      categoria = "Error";
+                    }
+                    i = i + j - 1;
+                    anadirToken(
+                      token: token,
+                      nombre: nombre,
+                      categoria: categoria
+                    );
+                    break;
+                  }
+                }
+                
+              }
+            }
+            componente = "";
+          }else{
+            //Añadimos componente a la lista de tokens, y lo limpiamos
+            anadirToken(token: componente);
+            componente = "";
+          }
         }
-        //Condicion cuando es identificador o cadena
+        //Condicion cuando es identificador
         else if (!dentroDe(componente[0], digito)){
 
+          print("Comprobamos si es un identificador");
           //Condicion para ver si el sigueinte caracter es uno no de identificador
-          if(!dentroDe(linea[i+1], letras+digito+subguion) && dentroDe(linea[i], letras+digito+subguion)){
+          if(i != linea.length-1){
+            if(!dentroDe(linea[i+1], letras+digito+subguion) && dentroDe(linea[i], letras+digito+subguion)){
+              anadirToken(
+                token: componente.toString(),
+                nombre: "Identificador",
+                categoria: "Identificadores"
+              );
 
-            String nombre, categoria = "";
-
-            //Condicion para encontrar cadena
-            if( dentroDe(linea[i-componente.length], ['"', "'"]) && dentroDe(linea[i+1], ['"', "'"])){
-
-              //Viendo si empieza y termina con la misma comilla
-              if(linea[i-componente.length] == linea[i+1]){
-                nombre = "Cadena";
-                categoria = "Constante Cadena";
-              }
-            }else{
-              nombre = "Identificador";
-              categoria = "Identificador";
+              componente = "";
             }
-
-            anadirToken(
-              token: componente.toString(),
-              nombre: nombre,
-              categoria: categoria
+          }else{
+            tokens.add(
+              {
+                "token": "Error",
+                "nombre": "Error",
+                "categoria": "Error"
+              }
             );
-
             componente = "";
           }
         }
         //Condicion para cuando es numero
         else if(dentroDe(componente, digito)){
+
+          //Error al comprobar que el siguiente no sea numero
+          //Agregar que al encontrar una coma considere un decimal
+
+          print("Comprobamos si es un numero");
           if(!dentroDe(linea[i+1], digito)){
             tokens.add(
               {
@@ -155,18 +196,8 @@ void analizadorLexico(String codigo) {
             componente = "";
           }
         }
-        //Condicion para cuando no pertenece
-        else{
-          tokens.add(
-            {
-              "token": "El texto no coincide con nuestro lenguaje",
-              "nombre": "Vacio",
-              "categoria": "Vacio"
-            }
-          );
-          componente = "";
-        }
       }on RangeError {
+        print(RangeError);
         break;
       }
     }
